@@ -10,6 +10,18 @@
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 export default defineConfig({
+  nitro: {
+    cloudflare: {
+      wrangler: {
+        compatibility_date: "2026-11-17",
+        compatibility_flags: ["nodejs_compat"],
+        vars: {
+          SUPABASE_URL: "https://wbgwxfdjuceuwuodbhdt.supabase.co",
+          SUPABASE_PUBLISHABLE_KEY: "sb_publishable_6We3mutwGlMEEeuInZy2pA_DPOVoXST",
+        },
+      },
+    },
+  },
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
