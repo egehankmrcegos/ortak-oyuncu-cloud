@@ -1,0 +1,1 @@
+ALTER TABLE public.rooms ADD COLUMN round_suggestions jsonb DEFAULT NULL;

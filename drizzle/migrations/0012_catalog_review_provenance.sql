@@ -1,0 +1,2 @@
+ALTER TABLE public.football_careers ADD COLUMN review_method text, ADD COLUMN evidence jsonb, ADD COLUMN evidence_license text;
+CREATE INDEX football_careers_verified_club_idx ON public.football_careers (club_id, player_id) WHERE review_status = 'verified';

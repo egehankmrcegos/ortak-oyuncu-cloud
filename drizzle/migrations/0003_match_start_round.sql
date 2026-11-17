@@ -1,0 +1,1 @@
+ALTER TABLE public.rooms ADD COLUMN IF NOT EXISTS match_start_round integer NOT NULL DEFAULT 1;

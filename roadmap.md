@@ -1,0 +1,41 @@
+- [x] Ücretsiz kaynakları canlı dene; TFF'den 99 maç / 429 futbolcu / 3.108 maç kanıtını ayrı inceleme havuzuna al, kesintide eski kayıtları koru; 114 test ve antrenman akışı geçti.
+- [x] Günlük sınırlı ücretsiz kaynak toplama görevini kur (iki maçlık dönen tarama; yeni endpoint yayınlanana kadar yayın adresinde çalışmaz).
+- [ ] Yeni kayıtları hakeme aç ve yedi ligde güncel kapsamı tamamla: Transfermarkt/Sofascore erişimi engelli; TFF kullanım hakkı ve kulüp/futbolcu kimlik eşleştirmesi doğrulanmayı bekliyor. İnceleme bekleyen kayıtlar puanlamaya açılmadı.
+- [x] Antrenman butonunu Rastgele düğmesinin yanına, tasarıma uygun koy.
+- [x] 7 ligin kulüplerini kataloğa ekle (142 kulüp, 15.803 futbolcu, 29.655 kariyer); Orkun (Beşiktaş–Benfica), Batshuayi (Beşiktaş–Dortmund) ve yazım hatalı futbolcu adlarını tanı.
+- [x] Tek kişilik antrenman modu (inceleme için tek cihaz yolu); bağlantı uyarısına Tekrar dene düğmesi.
+- [ ] Çok yeni transferler (ör. Orkun Kökçü'nün Beşiktaş dönemi) açık kaynaklarda maç sayısıyla yer alınca katalogu yeniden derle.
+- [x] AI çağrılarını kaldır; kayıt dışı cevabı yanlış saymadan güvenilir takım eşleşmeleriyle oyunu doğrula.
+- [x] İçerik filtresi, oyuncu bildirme/engelleme ve oyun verilerini silme seçeneklerini ekle.
+- [x] Günlük otomatik veri temizliği ve güncel gizlilik beyanlarını uygula.
+- [x] Orijinal armaları kaldır; yalnız kulüp renklerini kullan.
+- [x] Paketlenmiş iPhone oyun istemcisi ve güvenli sunucu bağlantısını hazırla; mağaza metinleri ve gönderim kontrolünü güncelle (iki oyunculu yerel paket testi geçti; gerçek iPhone görüntüleri cihaz bekliyor).
+- [x] Kaynak karşılaştırmasıyla 550 kariyer / 501 futbolcuyu doğrula; katalogdan AI olmadan karar ve öneri ver, kaynaklı doğru cevapları tekrar kullan; 39 test ve iki oyunculu Messi akışı doğrulandı.
+- [ ] Kalan 1.401 kariyeri doğrula ve kapsamı genişlet (eksik/uyuşmayan maç kanıtları ve 45 oyuncuda kaynak erişim hatası; bu kayıtlar yanlış sayılmaz).
+- [x] Ücretsiz açık futbol verisi için kaynaklı pilot kayıtları topla, ayrı katalog kur ve kapsamını ölç; hakemi yeterli veri olmadan değiştirme. İlk örnekler Cloud'da, tam snapshot projede; hakem geçişi yapılmadı.
+- [x] iOS test paket yapılandırmasını, simge ve açılış görsellerini ekle; yerel paylaşım ve bağlantı durumunu hazırla (mağaza sürümü değil).
+- [x] Gizlilik ve destek sayfalarını ekle; yapay zekâya cevap aktarımı için açık onay al ve geri almayı doğrula.
+- [x] App Store gönderim kontrol listesini hazırla; iki oyunculu web akışını, ekranları ve paket dosyalarını doğrula.
+- [x] Tarayıcı ekran/test kanıtlarını, görsel kaynak dökümünü ve teknik gizlilik incelemesini tamamla; 95 test ve iki oyunculu web akışı geçti, web/native gizlilik ayrımı ve takma ad beyanı düzeltildi.
+- [ ] Nihai iPhone/TestFlight görüntüleri, Archive gizlilik raporu ve görsel hak onayını tamamla (cihaz, macOS/Xcode ve hak sahibi teyidi bekleniyor); native üretim bağlantısı için yeni sunucu sürümü yayınlanmalı (mevcut API 404).
+- [ ] Apple hesabıyla imzala, gerçek iPhone/TestFlight üzerinde dene ve App Store'a gönder (Apple hesabı ve macOS/Xcode bekleniyor).
+- [x] iPhone güvenli ekran kenarlarını, klavye açık yerleşimi ve dokunma alanlarını iyileştir; küçük/büyük/yatay ekranlarda gerçek oyun akışını doğrula.
+- [x] Oyun ekranını kaydırmasız düzenle; geçmiş ve raporu ayrı pencerede göster, pası cevap düğmesinden ayır ve gerçek oyunda doğrula.
+- [x] Yeni tasarımı dar/kısa/yatay telefonlarda kontrol et; düğmelerin sığmasını, kaydırmayı ve güvenli ekran kenarlarını düzenle.
+- [x] Krem/turuncu renkleri bırakıp yeni futbol gecesi görünümünü ana sayfa ve oda ekranlarına uygula; telefon/bilgisayar ve oda akışını doğrula.
+- [x] Maç sonunda tüm turları, cevapları ve hakem açıklamalarını göster; rövanş geçmişini ayır.
+- [x] Kolay/orta/zor rastgele takım modu ekle; herkesin aynı takımları görmesini ve maç içi tekrar yasağını doğrula.
+- [x] SPOR ve 10 numarayı ayrı görsel alanları yerine arka plana taşı; yazı ve kutuların üzerine gelebilmesini doğrula.
+- [x] Trabzon adını Trabzonspor olarak kabul et; testlerde ve gerçek takım seçimi akışında doğrula.
+- [x] Var olmayan takım seçimini reddet; kullanıcıdan gerçek takım iste ve doğrula.
+- [x] iPhone ölçülerinde SPOR ve 10 numarayı kesmeden görünür tut; orta bölüm kaydırmasını doğrula.
+- [x] Telefonlarda kısa/dar/yatay ekran yerleşimini düzenle; çok oyunculu akışı ve dokunma alanlarını doğrula.
+- [x] Gönderilen referansları ana sayfa, lobi, takım seçimi, cevaplama ve sonuç ekranlarına uygula; oyun kurallarını koru ve telefon/bilgisayarda doğrula.
+- [x] İki farklı yanlış cevaptan sonra 5 saniyelik son hak aç; iki oyuncu da yanlış yapınca veya süre dolunca otomatik sonraki tura geç ve doğrula.
+- [x] İki farklı oyuncunun yanlışından sonra geçilen turda kaynaklarla doğrulanmış en fazla üç doğru cevap göster ve gerçek oyunla doğrula.
+- [x] Hakemin 2026–2027 dahil güncel kadro ve transferleri internetten doğrulamasını sağla.
+- [x] Tüm oyuncu çiftlerini dengeli sırayla eşleştir ve dört oyuncuyla doğrula.
+- [x] Takım isimlerindeki yazım hatalarını ve kısaltmaları otomatik düzelt; seçim akışını doğrula.
+- [x] Yanlış cevap sonrası başka oyuncunun yanlışını bekleme kuralını uygula ve doğrula.- [x] Pas seçeneği: herkes pas derse sonraki tura otomatik geç.
+
+- [x] Genel oyuncu kataloğunu genişlet (az oyuncu var; Adebayor, İbrahimović-Ajax gibi popüler eksikler)

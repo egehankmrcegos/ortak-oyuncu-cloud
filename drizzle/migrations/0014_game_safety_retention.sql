@@ -1,0 +1,33 @@
+CREATE TABLE public.game_reports (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), room_id uuid NOT NULL, reporter_id uuid NOT NULL, target_id uuid NOT NULL, reason text NOT NULL CHECK (reason IN ('nickname','answer','harassment')), details text NOT NULL DEFAULT '', status text NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','reviewed')), created_at timestamptz NOT NULL DEFAULT now());
+GRANT ALL ON public.game_reports TO service_role;
+ALTER TABLE public.game_reports ENABLE ROW LEVEL SECURITY;
+CREATE TABLE public.game_blocks (room_id uuid NOT NULL, blocker_id uuid NOT NULL, blocked_id uuid NOT NULL, created_at timestamptz NOT NULL DEFAULT now(), PRIMARY KEY(room_id,blocker_id,blocked_id));
+GRANT ALL ON public.game_blocks TO service_role;
+ALTER TABLE public.game_blocks ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.players ADD COLUMN deleted_at timestamptz;
+CREATE OR REPLACE FUNCTION public.erase_game_player(p_room uuid,p_player uuid,p_token uuid) RETURNS void LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$ BEGIN
+PERFORM 1 FROM public.rooms WHERE id=p_room FOR UPDATE;
+IF NOT EXISTS(SELECT 1 FROM public.players WHERE id=p_player AND room_id=p_room AND token=p_token AND deleted_at IS NULL) THEN RAISE EXCEPTION 'Oyuncu doğrulanamadı'; END IF;
+UPDATE public.players SET nickname='Silinen oyuncu',token=gen_random_uuid(),deleted_at=now() WHERE id=p_player AND room_id=p_room;
+UPDATE public.attempts SET nickname='Silinen oyuncu',answer='Silindi',explanation=NULL WHERE player_id=p_player AND room_id=p_room;
+UPDATE public.match_rounds SET answer=NULL,suggestions=NULL WHERE room_id=p_room;
+UPDATE public.rooms SET round_answer=NULL,round_suggestions=NULL,status='finished',updated_at=now() WHERE id=p_room;
+DELETE FROM public.picks WHERE room_id=p_room;
+DELETE FROM public.answer_submissions WHERE room_id=p_room AND player_id=p_player;
+DELETE FROM public.game_blocks WHERE room_id=p_room AND (blocker_id=p_player OR blocked_id=p_player);
+END; $$;
+REVOKE ALL ON FUNCTION public.erase_game_player(uuid,uuid,uuid) FROM PUBLIC,anon,authenticated;
+GRANT EXECUTE ON FUNCTION public.erase_game_player(uuid,uuid,uuid) TO service_role;
+CREATE OR REPLACE FUNCTION public.cleanup_game_data() RETURNS void LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$ DECLARE ids uuid[]; BEGIN
+SELECT array_agg(id) INTO ids FROM (SELECT id FROM public.rooms WHERE created_at < now()-interval '30 days' ORDER BY created_at LIMIT 10000) expired;
+DELETE FROM public.attempts WHERE room_id=ANY(ids);
+DELETE FROM public.picks WHERE room_id=ANY(ids);
+DELETE FROM public.answer_submissions WHERE room_id=ANY(ids);
+DELETE FROM public.match_rounds WHERE room_id=ANY(ids);
+DELETE FROM public.game_blocks WHERE room_id=ANY(ids);
+DELETE FROM public.players WHERE room_id=ANY(ids);
+DELETE FROM public.rooms WHERE id=ANY(ids);
+DELETE FROM public.game_reports WHERE created_at < now()-interval '90 days';
+END; $$;
+REVOKE ALL ON FUNCTION public.cleanup_game_data() FROM PUBLIC,anon,authenticated;
+GRANT EXECUTE ON FUNCTION public.cleanup_game_data() TO service_role;

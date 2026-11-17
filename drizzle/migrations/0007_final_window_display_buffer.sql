@@ -1,0 +1,1 @@
+DO $$ BEGIN EXECUTE replace(pg_get_functiondef('public.record_answer(uuid,boolean,text,text,text)'::regprocedure), 'interval ''5 seconds''', 'interval ''7 seconds'''); END $$;

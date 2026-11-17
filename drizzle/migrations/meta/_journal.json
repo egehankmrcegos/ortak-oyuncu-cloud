@@ -1,0 +1,118 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1794513736550,
+      "tag": "0000_migration",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1794514087322,
+      "tag": "0001_restrict_room_and_attempt_reads",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794519935837,
+      "tag": "0002_enforce_wrong_answer_wait",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1794595441159,
+      "tag": "0003_match_start_round",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1794595952017,
+      "tag": "0004_allow_late_attempts",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1794599949379,
+      "tag": "0005_skipped_round_suggestions",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1794600354458,
+      "tag": "0006_final_answer_countdown",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1794603982367,
+      "tag": "0007_final_window_display_buffer",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1794604453133,
+      "tag": "0008_round_pass",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1794612520607,
+      "tag": "0009_match_history_random_mode",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1794612653101,
+      "tag": "0010_random_pool_exhaustion",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1794682365861,
+      "tag": "0011_football_open_data_catalog",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1794683547147,
+      "tag": "0012_catalog_review_provenance",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1794683764018,
+      "tag": "0013_football_positive_verdict_cache",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1794685899157,
+      "tag": "0014_game_safety_retention",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1794931200000,
+      "tag": "0015_round_countdown_and_api_candidates",
+      "breakpoints": true
+    }
+  ]
+}

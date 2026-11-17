@@ -1,0 +1,16 @@
+import { createRoot } from 'react-dom/client';
+import { createRootRouteWithContext, createRouter, Outlet, RouterProvider, createHashHistory } from '@tanstack/react-router';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Route as Home } from '../src/routes/index';
+import { Route as Room } from '../src/routes/oda/$code';
+import { Route as Privacy } from '../src/routes/gizlilik';
+import { Route as Support } from '../src/routes/destek';
+import { Route as Training } from '../src/routes/antrenman';
+import { Toaster } from '../src/components/ui/sonner';
+import '../src/styles.css';
+const queryClient=new QueryClient();
+const root=createRootRouteWithContext<{queryClient:QueryClient}>()({component:()=> <QueryClientProvider client={queryClient}><Outlet/><Toaster position="top-center"/></QueryClientProvider>});
+const routes=[Home.update({id:'/',path:'/',getParentRoute:()=>root} as any),Room.update({id:'/oda/$code',path:'/oda/$code',getParentRoute:()=>root} as any),Privacy.update({id:'/gizlilik',path:'/gizlilik',getParentRoute:()=>root} as any),Support.update({id:'/destek',path:'/destek',getParentRoute:()=>root} as any),Training.update({id:'/antrenman',path:'/antrenman',getParentRoute:()=>root} as any)];
+const router=createRouter({routeTree:root.addChildren(routes),context:{queryClient},history:createHashHistory()});
+const container=document.getElementById('root');
+if(container) createRoot(container).render(<RouterProvider router={router}/>);

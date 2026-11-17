@@ -1,0 +1,2 @@
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["./web-BmZ_V9NQ.js","./dist-CnJWD_Ht.js"])))=>i.map(i=>d[i]);
+import{t as e}from"./index-DmFL0wfc.js";import{registerPlugin as t}from"./dist-CnJWD_Ht.js";var n=t(`Network`,{web:()=>e(()=>import(`./web-BmZ_V9NQ.js`).then(e=>new e.NetworkWeb),__vite__mapDeps([0,1]),import.meta.url)});export{n as Network};

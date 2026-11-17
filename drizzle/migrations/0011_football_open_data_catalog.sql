@@ -1,0 +1,11 @@
+CREATE TABLE public.football_clubs (id text PRIMARY KEY, name text NOT NULL, country_code text NOT NULL, source_url text NOT NULL, license text NOT NULL DEFAULT 'CC0-1.0');
+GRANT ALL ON public.football_clubs TO service_role;
+ALTER TABLE public.football_clubs ENABLE ROW LEVEL SECURITY;
+CREATE TABLE public.football_players (id text PRIMARY KEY, name text NOT NULL, aliases text[] NOT NULL DEFAULT '{}', source_url text NOT NULL, license text NOT NULL DEFAULT 'CC0-1.0');
+GRANT ALL ON public.football_players TO service_role;
+ALTER TABLE public.football_players ENABLE ROW LEVEL SECURITY;
+CREATE TABLE public.football_careers (id text PRIMARY KEY, player_id text NOT NULL REFERENCES public.football_players(id), club_id text NOT NULL REFERENCES public.football_clubs(id), start_date date, end_date date, reported_appearances integer, source_url text NOT NULL, retrieved_at timestamptz NOT NULL, review_status text NOT NULL DEFAULT 'pending' CHECK (review_status IN ('pending', 'verified', 'rejected')), verified_source_url text, UNIQUE(player_id,club_id,start_date,end_date));
+GRANT ALL ON public.football_careers TO service_role;
+ALTER TABLE public.football_careers ENABLE ROW LEVEL SECURITY;
+CREATE INDEX football_careers_pair ON public.football_careers(club_id,player_id);
+COMMENT ON TABLE public.football_careers IS 'Staging catalogue: Wikidata membership and reported caps are not proof of official first-team appearances. Pending rows must never judge game answers.';

@@ -1,0 +1,3 @@
+CREATE TABLE public.football_verdict_cache (pair_key text NOT NULL, player_key text NOT NULL, player text NOT NULL, explanation text NOT NULL, sources text[] NOT NULL, checked_at timestamptz NOT NULL DEFAULT now(), PRIMARY KEY(pair_key,player_key), CHECK(cardinality(sources)>0));
+GRANT ALL ON public.football_verdict_cache TO service_role;
+ALTER TABLE public.football_verdict_cache ENABLE ROW LEVEL SECURITY;
