@@ -33,7 +33,7 @@ function Home() {
   const [nickname, setNickname] = useState("");
   const [code, setCode] = useState("");
   const [target, setTarget] = useState<3 | 5>(3);
-  const [mode, setMode] = useState<TeamMode>("manual");
+  const [mode, setMode] = useState<TeamMode | null>(null);
   const [difficulty, setDifficulty] = useState<Difficulty>("easy");
   const [roundSeconds, setRoundSeconds] = useState(0);
   const [busy, setBusy] = useState(false);
@@ -73,7 +73,7 @@ function Home() {
         </div>
         <TeamModePicker mode={mode} difficulty={difficulty} onMode={setMode} onDifficulty={setDifficulty} roundSeconds={roundSeconds} onRoundSeconds={setRoundSeconds} disabled={busy} />
       </div>
-      <Button disabled={busy} className="main-action" onClick={() => run(() => create({ data: { nickname, target, mode, difficulty, roundSeconds } }))}>{busy ? "Bekleniyor…" : "Oda kur"}<ArrowUpRight /></Button>
+      <Button disabled={busy || mode === null} className="main-action" onClick={() => mode && run(() => create({ data: { nickname, target, mode, difficulty, roundSeconds } }))}>{busy ? "Bekleniyor…" : "Oda kur"}<ArrowUpRight /></Button>
       <section className="invite-panel" aria-label="Davet koduyla odaya katıl">
         <div className="join-divider"><span>DAVET KODUN VAR MI?</span></div>
         <div className="join-row">
