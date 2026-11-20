@@ -39,12 +39,19 @@ export const createRoom = createServerFn({ method: "POST" })
   .inputValidator((i) => z.object({ nickname: nick, target: z.union([z.literal(3), z.literal(5)]), ...modeOptions, roundSeconds: roundSecondsOption }).parse(i))
   .handler(async ({ data }) => {
     const db = await admin();
-    let room = null;
+        let room = null;
+    let roomInsertError: { code?: string; message: string } | null = null;
     for (let i = 0; i < 5 && !room; i++) {
-      const { data: r } = await db.from("rooms").insert({ code: makeCode(), target_score: data.target, team_mode: data.mode ?? "manual", difficulty: data.difficulty ?? "easy", round_seconds: data.roundSeconds ?? 0 }).select().single();
+      const { data: r, error } = await db.from("rooms").insert({ code: makeCode(), target_score: data.target, team_mode: data.mode ?? "manual", difficulty: data.difficulty ?? "easy", round_seconds: data.roundSeconds ?? 0 }).select().single();
+      if (error) {
+        roomInsertError = error;
+        if (error.code === "23505") continue;
+        throw new Error(`Oda oluşturulamadı: ${error.message}`);
+      }
       room = r;
     }
-    if (!room) throw new Error("Oda oluşturulamadı");
+    if (!room) throw new Error(roomInsertError ? `Oda oluşturulamadı: ${roomInsertError.message}` : "Oda oluşturulamadı");
+
     const { data: p, error } = await db.from("players").insert({ room_id: room.id, nickname: data.nickname }).select().single();
     if (error || !p) throw new Error("Oyuncu eklenemedi");
     await db.from("rooms").update({ host_player_id: p.id }).eq("id", room.id);
