@@ -74,11 +74,13 @@ function Home() {
         <TeamModePicker mode={mode} difficulty={difficulty} onMode={setMode} onDifficulty={setDifficulty} roundSeconds={roundSeconds} onRoundSeconds={setRoundSeconds} disabled={busy} />
       </div>
       <Button disabled={busy} className="main-action" onClick={() => run(() => create({ data: { nickname, target, mode, difficulty, roundSeconds } }))}>{busy ? "Bekleniyor…" : "Oda kur"}<ArrowUpRight /></Button>
-      <div className="join-divider"><span>DAVETİN Mİ VAR?</span></div>
-      <div className="join-row">
-        <Input aria-label="Oda kodu" autoComplete="off" autoCorrect="off" autoCapitalize="characters" spellCheck={false} enterKeyHint="done" value={code} onChange={(e) => setCode(parseRoomCode(e.target.value) ?? e.target.value.toUpperCase())} maxLength={2048} placeholder="ABCDE" className="game-input" />
-        <Button disabled={busy || !parseRoomCode(code)} variant="secondary" className="join-action" onClick={() => run(() => join({ data: { code, nickname } }))}><LogIn />Katıl</Button>
-      </div>
+      <section className="invite-panel" aria-label="Davet koduyla odaya katıl">
+        <div className="join-divider"><span>DAVET KODUN VAR MI?</span></div>
+        <div className="join-row">
+          <Input aria-label="Oda kodu" autoComplete="off" autoCorrect="off" autoCapitalize="characters" spellCheck={false} enterKeyHint="done" value={code} onChange={(e) => setCode(parseRoomCode(e.target.value) ?? e.target.value.toUpperCase())} maxLength={2048} placeholder="Oda kodu · ABCDE" className="game-input" />
+          <Button disabled={busy || !parseRoomCode(code)} variant="secondary" className="join-action" onClick={() => run(() => join({ data: { code, nickname } }))}><LogIn />Katıl</Button>
+        </div>
+      </section>
     </GameShell>
   );
 }
