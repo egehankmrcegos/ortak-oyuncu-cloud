@@ -15,7 +15,7 @@ export default defineConfig({
       wrangler: {
         compatibility_date: "2026-11-17",
         compatibility_flags: ["nodejs_compat"],
-        vars: {
+        ai: { binding: "AI" }, vars: {
           SUPABASE_URL: "https://wbgwxfdjuceuwuodbhdt.supabase.co",
           SUPABASE_PUBLISHABLE_KEY: "sb_publishable_6We3mutwGlMEEeuInZy2pA_DPOVoXST",
         },
