@@ -155,7 +155,7 @@ function Game({ code, me }: { code: string; me: Identity }) {
           </> : <>
             <div className="picking-emblem"><LockKeyhole /></div><p className="mb-6 text-center text-muted-foreground"><b className="text-foreground">{name(room.chooser_a)}</b> ve <b className="text-foreground">{name(room.chooser_b)}</b> gizlice birer takım seçiyor.</p>
             {(me.playerId === room.chooser_a || me.playerId === room.chooser_b) ? <PickForm key={room.round_no} auth={auth} picked={picked} excludedTeams={usedTeams} /> : <p className="text-center font-semibold">Hazır olunca takımlar aynı anda açılacak…</p>}
-            {isHost && <SkipButton auth={auth} />}
+             
           </>}
         </Panel>
       )}
