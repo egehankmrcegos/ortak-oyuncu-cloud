@@ -598,3 +598,10 @@ html, body { overscroll-behavior: none; }
 .keyboard-open .home-screen .scene-content { justify-content: flex-start; }
 .keyboard-open .home-screen .invite-panel { margin-top: 4px; padding-top: 0; }
 .keyboard-open .home-screen .invite-panel .join-row { margin-top: 0; }
+
+
+/* Keep the private team-pick action reachable above the mobile keyboard. */
+.keyboard-open .room-screen.status-picking .scene-content { overflow-x: hidden; overflow-y: auto; justify-content: flex-start; -webkit-overflow-scrolling: touch; }
+.keyboard-open .status-picking .game-section { flex: 0 0 auto; }
+.keyboard-open .status-picking .game-section > p { display: none; }
+.keyboard-open .status-picking .game-section form > button { min-height: 48px; flex-shrink: 0; }
