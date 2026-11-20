@@ -342,19 +342,19 @@ function PickForm({ auth, picked, excludedTeams }: { auth: Auth; picked: boolean
 function AnswerForm({ auth, allowed, final, onAnswered }: { auth: Auth; allowed: boolean; final: boolean; onAnswered: () => Promise<void> }) {
   const { busy, run } = useAction(useServerFn(submitAnswer));
   const [answer, setAnswer] = useState("");
-  const [waiting, setWaiting] = useState(false);
+  const [waiting, setWaiting] = useState(false); const [feedback, setFeedback] = useState<{ answer: string; explanation: string; unverified: boolean } | null>(null);
   const blocked = !allowed || waiting;
   return (
     <form className="answer-form flex flex-col gap-2" onSubmit={async (e) => {
       e.preventDefault();
       if (blocked || busy) return;
-      const r = (await run({ ...auth, answer })) as { correct: boolean } | undefined;
-      if (r && !r.correct) { setWaiting(true); toast.error("Yanlış cevap! Diğer oyuncu bekleniyor."); setAnswer(""); }
+      const submittedAnswer = answer.trim(); const r = (await run({ ...auth, answer: submittedAnswer })) as { correct: boolean; explanation?: string; unverified?: boolean } | undefined;
+      if (r && !r.correct) { setWaiting(!r.unverified); setFeedback({ answer: submittedAnswer, explanation: r.explanation ?? "Bu cevap için yeterli kayıt bulunamadı.", unverified: !!r.unverified }); setAnswer(""); } else if (r?.correct) setFeedback(null);
       await onAnswered();
       setWaiting(false);
     }}>
       <Input aria-label="Oyuncu adı" autoComplete="off" autoCorrect="off" spellCheck={false} enterKeyHint="send" disabled={blocked || busy} value={answer} onChange={(e) => setAnswer(e.target.value)} placeholder="Oyuncu adı yaz" className="game-input" maxLength={60} />
-      <Button disabled={busy || blocked || answer.trim().length < 2} className="answer-action"><Send />{busy ? "Hakem kontrol ediyor…" : blocked ? final ? "Son cevap bekleniyor…" : "Diğer oyuncu bekleniyor…" : "Cevapla"}</Button>
+      <Button disabled={busy || blocked || answer.trim().length < 2} className="answer-action"><Send />{busy ? "Hakem kontrol ediyor…" : blocked ? final ? "Son cevap bekleniyor…" : "Diğer oyuncu bekleniyor…" : "Cevapla"}</Button>{feedback && <p className={`rounded border-l-4 px-3 py-2 text-sm leading-snug ${feedback.unverified ? "border-primary bg-primary/10" : "border-destructive bg-destructive/10"}`} role="status" aria-live="polite"><b>{feedback.unverified ? "Doğrulanamadı:" : "Yanlış cevap:"}</b> {feedback.answer}. {feedback.explanation} Bir cevap daha deneyebilirsin.</p>}
     </form>
   );
 }
