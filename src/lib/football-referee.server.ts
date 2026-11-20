@@ -7,7 +7,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import { findExternalCareerCandidate } from "@/lib/football-api-candidates.server";
 
-type Verdict = { correct: boolean; player: string; explanation: string; sources: string[] };
+type Verdict = { correct: boolean; player: string; explanation: string; sources: string[]; verification?: "verified" | "unverified" };
 // Compact rows: [playerId, clubId, startYear, leagueMatches, sourcePath].
 const reviewed = {
   clubs: (compact.clubs as [string, string][]).map(([id, name]) => ({ id, name })),
@@ -116,7 +116,53 @@ export async function judgeWithCatalog(db: SupabaseClient<Database>, a: string, 
   const why = careerExplanation(a, b, answer);
   if (why) throw new Error(`${why} Yanlış sayılmadı; başka bir futbolcu deneyebilir veya pas diyebilirsin.`);
   throw new Error("Bu cevap mevcut kayıtlardan doğrulanamadı; yanlış sayılmadı. Başka bir futbolcu adı deneyebilir veya pas diyebilirsin.");
+}type WDClaim = { mainsnak?: { datavalue?: { value?: { id?: string } } }; qualifiers?: Record<string, Array<{ datavalue?: { value?: { time?: string } } }>> };
+/** Verify a missing answer with dated Wikidata claims and AI, then cache sourced positives. */
+export async function judgeWithFallback(db: SupabaseClient<Database>, a: string, b: string, answer: string): Promise<Verdict> {
+  try { return await judgeWithCatalog(db, a, b, answer); }
+  catch (error) {
+    const message = error instanceof Error ? error.message : "";
+    if (message.includes("Kayıtlar şu anda okunamadı")) throw error;
+    try {
+      const search = async (name: string, kind: "player" | "club") => {
+        const url = new URL("https://www.wikidata.org/w/api.php");
+        url.search = new URLSearchParams({ action: "wbsearchentities", search: name, language: "en", format: "json", limit: "6" }).toString();
+        const response = await fetch(url, { signal: AbortSignal.timeout(4000) });
+        if (!response.ok) return [] as Array<{ id: string; label: string; description?: string }>;
+        const data = await response.json() as { search?: Array<{ id: string; label: string; description?: string }> };
+        return (data.search ?? []).filter(x => normalizeTeamName(x.label) === normalizeTeamName(name) && (kind === "player" ? /footballer|football player|soccer player/i.test(x.description ?? "") : /football club|soccer club/i.test(x.description ?? "")));
+      };
+      const [players, clubsA, clubsB] = await Promise.all([search(answer, "player"), search(a, "club"), search(b, "club")]);
+      if (players.length && clubsA.length && clubsB.length) {
+        const url = new URL("https://www.wikidata.org/w/api.php");
+        url.search = new URLSearchParams({ action: "wbgetentities", ids: [...new Set([...players, ...clubsA, ...clubsB].map(x => x.id))].join("|"), props: "labels|claims", languages: "en", format: "json" }).toString();
+        const response = await fetch(url, { signal: AbortSignal.timeout(4000) });
+        const data = response.ok ? await response.json() as { entities?: Record<string, { labels?: Record<string, { value: string }>; claims?: Record<string, WDClaim[]> }> } : {};
+        const entities = data.entities ?? {};
+        const year = (claim: WDClaim, key: string) => { const time = claim.qualifiers?.[key]?.map(q => q.datavalue?.value?.time).find(Boolean); return time ? Number(time.slice(1, 5)) : 0; };
+        for (const player of players) {
+          const claims = entities[player.id]?.claims?.P54 ?? [];
+          const dates = [new Set(clubsA.map(c => c.id)), new Set(clubsB.map(c => c.id))].map(ids => claims.find(c => { const start = year(c, "P580"), end = year(c, "P582"); return ids.has(c.mainsnak?.datavalue?.value?.id ?? "") && start > 0 && start <= new Date().getUTCFullYear() && (end || 9999) >= 1985; }));
+          if (dates.some(x => !x)) continue;
+          const evidence = dates.map((c, i) => { const id = c?.mainsnak?.datavalue?.value?.id ?? ""; return player.label + " — " + (entities[id]?.labels?.en?.value ?? (i ? b : a)) + " (" + (year(c!, "P580") || "unknown") + "–" + (year(c!, "P582") || "present") + ")"; });
+          const { env } = await import("cloudflare:workers");
+          if (!env.AI) break;
+          const output = await env.AI.run("@cf/meta/llama-3.1-8b-instruct-fast", { temperature: 0, max_tokens: 80, messages: [{ role: "system", content: "Review only the supplied dated Wikidata P54 club-membership statements. Return JSON only with verdict supported or unknown. Supported only if the named player has a dated statement for both requested clubs overlapping 1985 to present." }, { role: "user", content: JSON.stringify({ player: player.label, clubs: [a, b], evidence }) }] });
+          const raw = typeof output === "object" && output && "response" in output ? String((output as { response: unknown }).response) : "";
+          let verdict = "unknown"; try { verdict = JSON.parse(raw).verdict; } catch { /* malformed AI output stays unverified */ }
+          if (verdict !== "supported") continue;
+          const sources = [player.id, ...dates.map(c => c?.mainsnak?.datavalue?.value?.id ?? "")].filter(Boolean).map(id => "https://www.wikidata.org/wiki/" + id);
+          const result = { correct: true, player: player.label, explanation: player.label + ", tarihli Wikidata takım kayıtları ve AI kontrolüyle " + a + " ve " + b + " takımlarında oynadığı doğrulandı.", sources };
+          await db.from("football_verdict_cache").upsert({ pair_key: pairKey(a, b), player_key: playerNameKey(answer), player: result.player, explanation: result.explanation, sources, checked_at: new Date().toISOString() }, { onConflict: "pair_key,player_key" });
+          return result;
+        }
+      }
+    } catch (fallbackError) { console.warn("AI/source fallback could not verify answer", fallbackError); }
+    return { correct: false, verification: "unverified", player: answer, sources: [], explanation: message || "Cevap kaynaklarda bulunamadı; yanlış sayılmadı." };
+  }
 }
+
+
 
 export async function suggestionsWithCatalog(db: SupabaseClient<Database>, a: string, b: string) {
   const local = catalogSuggestions(a, b, new Date().toISOString().slice(0, 10));
